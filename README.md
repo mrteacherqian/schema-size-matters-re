@@ -219,11 +219,13 @@ python run_wiki80.py qwen3-14b --provider vllm >> $LOG_FILE 2>&1
 ```bash
 MERGED_LOGS = {
     "logs/qwen3-14b_full_merged.log": "qwen3",
-}```
+}
+```
 ### 3.Run the extraction:
 ```bash
 python extract_validator_conf.py
 ```
+
 ## 📁 Code Structure
 agents.py: Defines Extractor, Validator, and Refiner agents; handles LangChain prompts and LLM initialization.
 
