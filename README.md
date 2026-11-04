@@ -178,7 +178,10 @@ python run_scierc.py qwen2.5-7b --provider vllm
 # Wiki80 (80 classes)
 python run_wiki80.py qwen2.5-7b --provider vllm
 ```
-(Results will be automatically saved as JSON files in the outputs/ directory.)
+💡 Note on Outputs:
+After running the scripts, the results (including Zero-shot, Few-shot, Multi-Agent, and Ablation metrics) will be saved in the outputs/ directory. The filenames will follow the format: [dataset]_[model]_[provider]_results_4x3_1_full.json.
+
+If you want to debug quickly with a small subset, you can add the max_test argument in your Python script or modify sys.argv to pass a smaller number of test samples.
 
 ### Step 3: Sensitivity Analysis
 Run the threshold sensitivity analysis (forcing Refiner activation at conf=60):
@@ -186,8 +189,38 @@ Run the threshold sensitivity analysis (forcing Refiner activation at conf=60):
 python run_sensitivity.py --models qwen3-14b qwen2.5-7b
 ```
 
+
 ### Step 4: Extract Validator Confidence
-Extract Validator confidence distribution from the execution logs (generates a JSON for plotting):
+The `extract_validator_conf.py` script parses the execution logs to extract the Validator's confidence distribution and saves it as a JSON file for plotting.
+
+**Option A: Use the pre-extracted data (Quickest)**
+To save time, we have provided the pre-extracted confidence data used in our paper. You can find it at:
+`processed_data/validator_conf_data.json`
+You can directly use this file to reproduce the confidence distribution figures.
+
+**Option B: Extract from your own logs (Full reproduction)**
+If you want to reproduce the extraction process from scratch, you must generate a **merged log file** with section markers:
+
+### 1. Generate the merged log:
+```bash
+mkdir -p logs
+LOG_FILE=logs/qwen3-14b_full_merged.log
+
+echo "[INFO] === SemEval ===" >> $LOG_FILE
+python run_semeval.py qwen3-14b --provider vllm >> $LOG_FILE 2>&1
+
+echo "[INFO] === SciERC ===" >> $LOG_FILE
+python run_scierc.py qwen3-14b --provider vllm >> $LOG_FILE 2>&1
+
+echo "[INFO] === Wiki80 ===" >> $LOG_FILE
+python run_wiki80.py qwen3-14b --provider vllm >> $LOG_FILE 2>&1
+
+### 2.Update the log path in extract_validator_conf.py:
+```bash
+MERGED_LOGS = {
+    "logs/qwen3-14b_full_merged.log": "qwen3",
+}```
+### 3.Run the extraction:
 ```bash
 python extract_validator_conf.py
 ```
