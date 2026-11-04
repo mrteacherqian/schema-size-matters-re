@@ -72,14 +72,14 @@ data/
 3. Environment Variables
 在项目根目录创建一个 .env 文件，配置你的 API 路由（可参考 .env.example）：
 
-env
+```env
 MODEL_PROVIDER=vllm
 
 # vLLM settings
 VLLM_BASE_URL=http://localhost:8000/v1
 VLLM_API_KEY=EMPTY
 VLLM_MODEL_NAME=qwen3-14b
-
+```
 🚀 Running Experiments
 Step 1: Start vLLM Server (Terminal 1)
 打开一个终端，激活 vLLM 环境，启动模型服务（以 Qwen3-14B 为例，默认端口 8000）：
