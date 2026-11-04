@@ -13,7 +13,10 @@ def main():
     # 当前只开 Qwen3；等 Qwen2.5 日志就绪后取消注释即可。
     # ========================================================
     MERGED_LOGS = {
+        # Update this to your actual merged log path
         "logs/qwen3-14b_full_20261027_144757.log": "qwen3",
+        
+        # If you also ran Qwen2.5, uncomment and update the path:
         # "logs/qwen2.5-7b_full_<TS>.log": "qwen2.5",
     }
     SPLIT_LOGS = {
