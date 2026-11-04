@@ -195,7 +195,7 @@ The `extract_validator_conf.py` script parses the execution logs to extract the 
 
 **Option A: Use the pre-extracted data (Quickest)**
 To save time, we have provided the pre-extracted confidence data used in our paper. You can find it at:
-`processed_data/validator_conf_data.json`
+`outputs/validator_conf_data.json`
 You can directly use this file to reproduce the confidence distribution figures.
 
 **Option B: Extract from your own logs (Full reproduction)**
