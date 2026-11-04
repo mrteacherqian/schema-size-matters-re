@@ -53,7 +53,7 @@ pip install -r requirements-vllm.txt
 1. Data Preparation
 请下载对应的数据集并放在 data/ 目录下。目录结构应如下：
 
-text
+```text
 data/
 ├── SemEval2010_task8_training/TRAIN_FILE.TXT
 ├── SemEval2010_task8_testing/TEST_FILE.TXT
@@ -64,6 +64,7 @@ data/
     ├── wiki80_train.txt
     └── wiki80_val.txt
 (Note: The data/ directory is ignored by git to avoid large file uploads.)
+```
 
 2. Model Preparation
 请将本地模型（如 Qwen3-14B）以及用于示例检索的 Sentence-BERT 模型（all-MiniLM-L6-v2）下载到本地 model/ 目录中。
