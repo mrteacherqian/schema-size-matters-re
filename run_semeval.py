@@ -29,13 +29,12 @@ def run_semeval(model_key: str = "qwen3-14b",
                 max_test=None,
                 provider: str = None):
     """
-    SemEval-2010 完整实验
-
+    Run complete experiments on SemEval-2010.
     Args:
-        model_key: 模型标识（qwen3-14b / qwen2.5-7b 等）
-        k_values:  Few-shot 的 k 值列表
-        max_test:  测试样本上限（None 表示全量 2717 条）
-        provider:  覆盖 Config.MODEL_PROVIDER（默认使用配置文件的值）
+        model_key: Model identifier (e.g., "qwen3-14b", "qwen2.5-7b").
+        k_values: List of k values for Few-shot experiments.
+        max_test: Maximum number of test samples (None for full dataset).
+        provider: Override Config.MODEL_PROVIDER (e.g., "vllm", "local").
     """
     print("=" * 70)
     print(f"SemEval-2010 (19 类双向) | 模型: {model_key}")
