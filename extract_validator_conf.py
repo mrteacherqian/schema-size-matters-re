@@ -1,70 +1,3 @@
-# # extract_validator_conf.py
-# import re
-# import json
-# import os
-#
-#
-# def main():
-#     # ========================================================
-#     # 日志路径配置
-#     # 目前只开启 Qwen3 的日志提取。
-#     # 等以后跑了 Qwen2.5，把下面 3 行 Qwen2.5 的注释删掉即可。
-#     # ========================================================
-#     log_files = {
-#         # --- Qwen3-14B 日志 ---
-#         "logs/full_semeval_qwen3-14b.log": "qwen3",
-#         "logs/full_scierc_qwen3-14b.log": "qwen3",
-#         "logs/full_wiki80_qwen3-14b.log": "qwen3",
-#
-#         # --- Qwen2.5-7B 日志（目前注释掉，后续开启） ---
-#         # "logs/full_semeval_qwen2.5-7b.log": "qwen2.5",
-#         # "logs/full_scierc_qwen2.5-7b.log": "qwen2.5",
-#         # "logs/full_wiki80_qwen2.5-7b.log": "qwen2.5",
-#     }
-#
-#     records = []
-#     for lf, model_name in log_files.items():
-#         if not os.path.exists(lf):
-#             print(f"[跳过] 找不到日志: {lf}")
-#             continue
-#
-#         print(f"[扫描] {lf} (模型: {model_name}) ...")
-#         with open(lf, errors="ignore") as f:
-#             for line in f:
-#                 # 匹配格式: [Validator] #0: passed=True, conf=90
-#                 m = re.search(r'\[Validator\]\s+#\d+:\s+passed=(True|False),\s+conf=(\d+)', line)
-#                 if m:
-#                     records.append({
-#                         "model": model_name,
-#                         "passed": m.group(1) == "True",
-#                         "confidence": int(m.group(2))
-#                     })
-#
-#     print(f"\n共提取到 {len(records)} 条 Validator 置信度记录")
-#
-#     if len(records) == 0:
-#         print("❌ 未提取到任何数据。请确认日志文件中是否包含 '[Validator]' 的输出。")
-#         return
-#
-#     # 简单统计一下当前提取到的数据
-#     for m in set(r["model"] for r in records):
-#         m_records = [r for r in records if r["model"] == m]
-#         passed = [r["confidence"] for r in m_records if r["passed"]]
-#         failed = [r["confidence"] for r in m_records if not r["passed"]]
-#         print(f"--- {m.upper()} 统计 ---")
-#         if passed: print(f"  passed=True : {len(passed)} 条, 平均置信度: {sum(passed) / len(passed):.1f}")
-#         if failed: print(f"  passed=False: {len(failed)} 条, 平均置信度: {sum(failed) / len(failed):.1f}")
-#
-#     # 保存
-#     os.makedirs("outputs", exist_ok=True)
-#     out_path = "outputs/validator_conf_data.json"
-#     with open(out_path, "w", encoding="utf-8") as fp:
-#         json.dump(records, fp, indent=2)
-#     print(f"\n✅ 数据已成功保存到: {out_path}")
-#
-#
-# if __name__ == "__main__":
-#     main()
 
 # extract_validator_conf.py
 import re
@@ -80,7 +13,6 @@ def main():
     # 当前只开 Qwen3；等 Qwen2.5 日志就绪后取消注释即可。
     # ========================================================
     MERGED_LOGS = {
-        # 文件路径 -> 默认 model（dataset 由内部标记决定）
         "logs/qwen3-14b_full_20261027_144757.log": "qwen3",
         # "logs/qwen2.5-7b_full_<TS>.log": "qwen2.5",
     }
