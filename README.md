@@ -214,7 +214,7 @@ python run_scierc.py qwen3-14b --provider vllm >> $LOG_FILE 2>&1
 
 echo "[INFO] === Wiki80 ===" >> $LOG_FILE
 python run_wiki80.py qwen3-14b --provider vllm >> $LOG_FILE 2>&1
-
+```
 ### 2.Update the log path in extract_validator_conf.py:
 ```bash
 MERGED_LOGS = {
