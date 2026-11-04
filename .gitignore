@@ -2,6 +2,7 @@
 __pycache__/
 *.py[codz]
 *$py.class
+*.py[cod]
 
 # C extensions
 *.so
@@ -21,6 +22,10 @@ sdist/
 var/
 wheels/
 share/python-wheels/
+outputs/
+logs/*.log
+data/
+model/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -158,7 +163,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+.conda/
 # Spyder project settings
 .spyderproject
 .spyproject
