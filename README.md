@@ -126,8 +126,8 @@ conda activate muagent_vllm
 
 # Make script executable
 chmod +x start_vllm.sh
-
-Approach A: Run both models simultaneously (in the background)
+```
+**Approach A: Run both models simultaneously (in the background)**
 (Note: Ensure your GPU memory is sufficient to hold both 14B and 7B models.)
 ```bash
 # Start Qwen3-14B on port 8000 (background)
@@ -136,12 +136,15 @@ nohup bash start_vllm.sh /home/robot/model/Qwen3-14B 8000 1 qwen3-14b > vllm_qwe
 # Start Qwen2.5-7B on port 8001 (background, note the relative path in ./model/)
 nohup bash start_vllm.sh ./model/Qwen2.5-7B-Instruct 8001 1 qwen2.5-7b > vllm_qwen25.log 2>&1 &
 ```
-Approach B: Run separately (Recommended if you have limited GPU memory)
+**Approach B: Run separately (Recommended if you have limited GPU memory)**
 Start Qwen3-14B first:
+```bash
 bash start_vllm.sh /home/robot/model/Qwen3-14B 8000 1 qwen3-14b
+```
 (Wait for Uvicorn running on http://0.0.0.0:8000, then run your experiments. After finishing, press Ctrl+C to stop, and then start Qwen2.5-7B):
+```bash
 bash start_vllm.sh ./model/Qwen2.5-7B-Instruct 8001 1 qwen2.5-7b
-
+```
 Step 2: Run Main Scripts (Terminal 3)
 Open another terminal, activate the main environment, and run the experiments.
 
