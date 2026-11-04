@@ -14,36 +14,35 @@ Few-shot relation extraction (RE) with large language models (LLMs) has emerged 
 - **Models Supported**: Supports vLLM (Qwen3-14B, Qwen2.5-7B) and DeepSeek APIs.
 
 ---
-
 ## 🛠️ Environment Setup
 
-本项目采用**双环境架构**以保障运行效率：主环境负责运行代码逻辑（LangGraph/数据处理），vLLM 环境专门负责提供大模型 API 服务。
-为了最大程度方便复现，本项目提供了 **Conda** 和 **Pip** 两种安装方式，请根据你的系统情况二选一。
+This project uses a **dual-environment architecture** to ensure runtime efficiency: the main environment handles code logic (LangGraph/data processing), while the vLLM environment is dedicated to serving the LLM API.
+To facilitate reproduction, we provide both **Conda** and **Pip** installation methods. Please choose one based on your system.
 
-### 1. Main Environment (主环境)
-用于运行评估脚本、加载数据、构建多智能体图。
+### 1. Main Environment (muagents)
+Used for running evaluation scripts, loading data, and building multi-agent graphs.
 
-**选项 A：使用 Conda 安装（全量依赖，适合严格对齐底层环境）**
+**Option A: Conda Installation (Full dependencies, for strict alignment)**
 ```bash
 conda env create -f environment-main.yml
 conda activate muagents
 ```
+**Option B: Pip Installation (Minimal dependencies, cross-platform)
 
-**选项 B：使用 Pip 安装（极简依赖，适合跨平台/其他 CUDA 版本）**
 ```bash
 conda create -n muagents python=3.10 -y
 conda activate muagents
 pip install -r requirements-main.txt
 ```
-### 2. vLLM Environment (模型服务环境)
-专门用于加载大语言模型并启动 OpenAI 兼容的 API 服务。
+2. vLLM Environment (muagent_vllm)
+Dedicated to loading LLMs and launching the OpenAI-compatible API service.
 
-选项 A：使用 Conda 安装（全量依赖，适合 Linux + CUDA 12.4 环境）
+Option A: Conda Installation (Full dependencies, suitable for Linux + CUDA 12.4)
 ```bash
 conda env create -f environment-vllm.yml
 conda activate muagent_vllm
 ```
-选项 B：使用 Pip 安装（极简依赖，Pip 会自动适配系统的 CUDA 版本）
+Option B: Pip Installation (Minimal dependencies, Pip auto-adapts to your CUDA version)
 ```bash
 conda create -n muagent_vllm python=3.10 -y
 conda activate muagent_vllm
@@ -51,8 +50,7 @@ pip install -r requirements-vllm.txt
 ```
 ## 📂 Data & Model Preparation
 1. Data Preparation
-请下载对应的数据集并放在 data/ 目录下。目录结构应如下：
-
+Please download the datasets and place them in the data/ directory. The structure should look like this:
 ```text
 data/
 ├── SemEval2010_task8_training/TRAIN_FILE.TXT
@@ -67,42 +65,90 @@ data/
 ```
 
 2. Model Preparation
-请将本地模型（如 Qwen3-14B）以及用于示例检索的 Sentence-BERT 模型（all-MiniLM-L6-v2）下载到本地 model/ 目录中。
-默认路径配置在 config.py 中，你可以根据需要修改。
+Please download the LLMs (e.g., Qwen3-14B, Qwen2.5-7B-Instruct) and the Sentence-BERT model (all-MiniLM-L6-v2) into the local model/ directory.
+Note: For Qwen2.5-7B, the expected path is ./model/Qwen2.5-7B-Instruct.。
+The default paths are configured in config.py and can be modified as needed.
 
 3. Environment Variables
-在项目根目录创建一个 .env 文件，配置你的 API 路由（可参考 .env.example）：
+Create a .env file in the project root to configure your API routes (you can refer to .env.example):
 
 ```env
+# ==========================================
+# Model Selection
+# ==========================================
+# Options: "vllm", "local", or "deepseek"
+# The main experiments in the paper use vLLM.
 MODEL_PROVIDER=vllm
 
-# vLLM settings
+# ==========================================
+# vLLM API Configuration (Recommended)
+# ==========================================
+# The Python scripts (e.g., run_semeval.py) will automatically override 
+# VLLM_BASE_URL and VLLM_MODEL_NAME based on the `model_key` argument.
+# 
+# - For Qwen3-14B: `python run_semeval.py qwen3-14b`
+#   It will use: http://localhost:8000/v1 (model: qwen3-14b)
+# 
+# - For Qwen2.5-7B: `python run_semeval.py qwen2.5-7b`
+#   It will use: http://localhost:8001/v1 (model: qwen2.5-7b)
+
+# Default fallback settings (usually for Qwen3-14B on port 8000)
 VLLM_BASE_URL=http://localhost:8000/v1
 VLLM_API_KEY=EMPTY
 VLLM_MODEL_NAME=qwen3-14b
+
+# ==========================================
+# Local HuggingFace Pipeline (Alternative)
+# ==========================================
+# If you set MODEL_PROVIDER=local, the code loads the model directly.
+# Expected path for Qwen2.5-7B-Instruct:
+LOCAL_MODEL_PATH=./model/Qwen2.5-7B-Instruct
+
+# ==========================================
+# Generation Parameters
+# ==========================================
+# Temperature=0.0 ensures deterministic outputs.
+TEMPERATURE=0.0
+# 50 tokens are sufficient since the model is instructed to output only a label.
+MAX_TOKENS=50
 ```
 🚀 Running Experiments
-Step 1: Start vLLM Server (Terminal 1)
-打开一个终端，激活 vLLM 环境，启动模型服务（以 Qwen3-14B 为例，默认端口 8000）：
+This project supports experiments on both Qwen3-14B and Qwen2.5-7B-Instruct. Depending on your hardware, you can start them simultaneously or separately.
+
+Step 1: Start vLLM Servers (Terminal 1 & 2)
+You need to assign an independent port for each model (default 8000 for Qwen3 and 8001 for Qwen2.5).
+Ensure your terminal is in the project root directory (where start_vllm.sh is located).
+Open a terminal, activate the vLLM environment, and grant execution permission:
 
 ```bash
-# 激活 vLLM 环境
+# Activate vLLM environment
 conda activate muagent_vllm
 
-# 赋予脚本执行权限
+# Make script executable
 chmod +x start_vllm.sh
 
-# 启动模型
-bash start_vllm.sh /home/robot/model/Qwen3-14B 8000 1 qwen3-14b
+Approach A: Run both models simultaneously (in the background)
+(Note: Ensure your GPU memory is sufficient to hold both 14B and 7B models.)
+```bash
+# Start Qwen3-14B on port 8000 (background)
+nohup bash start_vllm.sh /home/robot/model/Qwen3-14B 8000 1 qwen3-14b > vllm_qwen3.log 2>&1 &
+
+# Start Qwen2.5-7B on port 8001 (background, note the relative path in ./model/)
+nohup bash start_vllm.sh ./model/Qwen2.5-7B-Instruct 8001 1 qwen2.5-7b > vllm_qwen25.log 2>&1 &
 ```
-(等待终端输出 Uvicorn running on http://0.0.0.0:8000 即表示启动完成)
+Approach B: Run separately (Recommended if you have limited GPU memory)
+Start Qwen3-14B first:
+bash start_vllm.sh /home/robot/model/Qwen3-14B 8000 1 qwen3-14b
+(Wait for Uvicorn running on http://0.0.0.0:8000, then run your experiments. After finishing, press Ctrl+C to stop, and then start Qwen2.5-7B):
+bash start_vllm.sh ./model/Qwen2.5-7B-Instruct 8001 1 qwen2.5-7b
 
+Step 2: Run Main Scripts (Terminal 3)
+Open another terminal, activate the main environment, and run the experiments.
 
-Step 2: Run Main Scripts (Terminal 2)
-打开另一个终端，激活主环境，开始跑实验：
+For Qwen3-14B (Port 8000):
 
 ```bash
-# 激活主环境
+# Activate main environment
 conda activate muagents
 
 # SemEval-2010 (19 classes)
@@ -114,44 +160,58 @@ python run_scierc.py qwen3-14b --provider vllm
 # Wiki80 (80 classes)
 python run_wiki80.py qwen3-14b --provider vllm
 ```
-结果将自动保存在 outputs/ 目录下生成 JSON 文件。
+For Qwen2.5-7B (Port 8001):
+
+```bash
+# Activate main environment
+conda activate muagents
+
+# SemEval-2010 (19 classes)
+python run_semeval.py qwen2.5-7b --provider vllm
+
+# SciERC (7 classes)
+python run_scierc.py qwen2.5-7b --provider vllm
+
+# Wiki80 (80 classes)
+python run_wiki80.py qwen2.5-7b --provider vllm
+```
+(Results will be automatically saved as JSON files in the outputs/ directory.)
 
 Step 3: Sensitivity Analysis
-运行阈值敏感性分析实验（强制在 conf=60 时触发 Refiner）：
-
+Run the threshold sensitivity analysis (forcing Refiner activation at conf=60):
 ```bash
 python run_sensitivity.py --models qwen3-14b qwen2.5-7b
 ```
-Step 4: Extract Validator Confidence
-从执行日志中提取 Validator 的置信度分布（生成 JSON 供绘图使用）：
 
+Step 4: Extract Validator Confidence
+Extract Validator confidence distribution from the execution logs (generates a JSON for plotting):
 ```bash
 python extract_validator_conf.py
 ```
 ## 📁 Code Structure
-agents.py: 定义 Extractor, Validator, Refiner 智能体，处理 LangChain 提示词和 LLM 初始化。
+agents.py: Defines Extractor, Validator, and Refiner agents; handles LangChain prompts and LLM initialization.
 
-baselines.py: 实现基线模型，包括 PureLLM (Zero-shot) 和 FewShotPureLLM (带 ICL 示例)。
+baselines.py: Implements baseline models, including PureLLM (Zero-shot) and FewShotPureLLM (with ICL demonstrations).
 
-config.py: 全局配置，包括 API 端点、文件路径等。
+config.py: Global configuration, including API endpoints and file paths.
 
-data_loader.py: 负责加载 SemEval-2010, SciERC, Wiki80 数据集，处理实体标记。
+data_loader.py: Loads SemEval-2010, SciERC, and Wiki80 datasets, and handles entity tagging.
 
-few_shot_examples.py: 实现 4 种示例选择策略 (Random, Similarity, Hybrid MMR, Class-Balanced)。
+few_shot_examples.py: Implements 4 example selection strategies (Random, Similarity, Hybrid MMR, Class-Balanced).
 
-graph.py: 核心多智能体工作流 (LangGraph: Extractor → Validator → Refiner)。
+graph.py: Core multi-agent workflow (LangGraph: Extractor → Validator → Refiner).
 
-graph_extractor_only.py: 消融实验 (Extractor → Evaluator)。
+graph_extractor_only.py: Ablation study (Extractor → Evaluator).
 
-graph_extractor_validator.py: 消融实验 (Extractor → Validator → Evaluator，无 Refiner)。
+graph_extractor_validator.py: Ablation study (Extractor → Validator → Evaluator, without Refiner).
 
-state.py: 定义 LangGraph 的共享状态 AgentState 及 ExtractionResult 数据结构。
+state.py: Defines the shared AgentState and ExtractionResult data structures for LangGraph.
 
-utils.py: 辅助函数，包括准确率/Macro-F1计算、严格方向匹配标签解析等。
+utils.py: Utility functions, including accuracy/Macro-F1 calculation and strict directional label parsing.
 
-run_*.py: 各数据集的具体执行管线及敏感度分析脚本。
+run_*.py: Execution pipelines for each dataset and the sensitivity analysis script.
 
-start_vllm.sh: 用于一键启动 vLLM API 服务的脚本。
+start_vllm.sh: Shell script to launch the vLLM API service.
 
 ## 📝 Citation
 If you find this code or our findings useful in your research, please consider citing our paper:
@@ -159,7 +219,7 @@ If you find this code or our findings useful in your research, please consider c
 bibtex
 @article{qian2026schema,
   title={Schema-Size Matters: An Empirical Study of Diversity-Aware Example Selection and the Limitations of Multi-Agent Verification for Few-Shot Relation Extraction},
-  author={Qian, Xiangguo and Xu, Yong and Fu, Kui},
+  author={Qian, Xiangguo and Xu, Yong and Wei, Rikun},
   journal={[Journal Name]},
   year={2026}
 }
