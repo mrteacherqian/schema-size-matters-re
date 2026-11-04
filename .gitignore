@@ -23,6 +23,8 @@ var/
 wheels/
 share/python-wheels/
 outputs/
+!outputs/
+!outputs/validator_conf_data.json
 logs/*.log
 data/
 model/
