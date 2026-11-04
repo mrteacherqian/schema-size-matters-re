@@ -80,10 +80,6 @@ VLLM_BASE_URL=http://localhost:8000/v1
 VLLM_API_KEY=EMPTY
 VLLM_MODEL_NAME=qwen3-14b
 
-# DeepSeek API (Optional)
-DEEPSEEK_API_KEY=your_api_key_here
-DEEPSEEK_API_BASE=https://api.deepseek.com/v1
-DEEPSEEK_MODEL=deepseek-chat
 🚀 Running Experiments
 Step 1: Start vLLM Server (Terminal 1)
 打开一个终端，激活 vLLM 环境，启动模型服务（以 Qwen3-14B 为例，默认端口 8000）：
@@ -97,8 +93,9 @@ chmod +x start_vllm.sh
 
 # 启动模型
 bash start_vllm.sh /home/robot/model/Qwen3-14B 8000 1 qwen3-14b
-(等待终端输出 Uvicorn running on http://0.0.0.0:8000 即表示启动完成)
 ```
+(等待终端输出 Uvicorn running on http://0.0.0.0:8000 即表示启动完成)
+
 
 Step 2: Run Main Scripts (Terminal 2)
 打开另一个终端，激活主环境，开始跑实验：
