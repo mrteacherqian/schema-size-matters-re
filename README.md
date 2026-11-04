@@ -115,7 +115,7 @@ MAX_TOKENS=50
 ## 🚀 Running Experiments
 This project supports experiments on both Qwen3-14B and Qwen2.5-7B-Instruct. Depending on your hardware, you can start them simultaneously or separately.
 
-### 1.Step 1: Start vLLM Servers (Terminal 1 & 2)
+### Step 1: Start vLLM Servers (Terminal 1 & 2)
 You need to assign an independent port for each model (default 8000 for Qwen3 and 8001 for Qwen2.5).
 Ensure your terminal is in the project root directory (where start_vllm.sh is located).
 Open a terminal, activate the vLLM environment, and grant execution permission:
@@ -145,7 +145,7 @@ bash start_vllm.sh /home/robot/model/Qwen3-14B 8000 1 qwen3-14b
 ```bash
 bash start_vllm.sh ./model/Qwen2.5-7B-Instruct 8001 1 qwen2.5-7b
 ```
-### 2.Step 2: Run Main Scripts (Terminal 3)
+### Step 2: Run Main Scripts (Terminal 3)
 Open another terminal, activate the main environment, and run the experiments.
 
 For Qwen3-14B (Port 8000):
@@ -180,13 +180,13 @@ python run_wiki80.py qwen2.5-7b --provider vllm
 ```
 (Results will be automatically saved as JSON files in the outputs/ directory.)
 
-### 3.Step 3: Sensitivity Analysis
+### Step 3: Sensitivity Analysis
 Run the threshold sensitivity analysis (forcing Refiner activation at conf=60):
 ```bash
 python run_sensitivity.py --models qwen3-14b qwen2.5-7b
 ```
 
-### 4.Step 4: Extract Validator Confidence
+### Step 4: Extract Validator Confidence
 Extract Validator confidence distribution from the execution logs (generates a JSON for plotting):
 ```bash
 python extract_validator_conf.py
