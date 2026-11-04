@@ -27,29 +27,29 @@ Used for running evaluation scripts, loading data, and building multi-agent grap
 conda env create -f environment-main.yml
 conda activate muagents
 ```
-**Option B: Pip Installation (Minimal dependencies, cross-platform)
+**Option B: Pip Installation (Minimal dependencies, cross-platform)**
 
 ```bash
 conda create -n muagents python=3.10 -y
 conda activate muagents
 pip install -r requirements-main.txt
 ```
-2. vLLM Environment (muagent_vllm)
+### 2. vLLM Environment (muagent_vllm)
 Dedicated to loading LLMs and launching the OpenAI-compatible API service.
 
-Option A: Conda Installation (Full dependencies, suitable for Linux + CUDA 12.4)
+**Option A: Conda Installation (Full dependencies, suitable for Linux + CUDA 12.4)**
 ```bash
 conda env create -f environment-vllm.yml
 conda activate muagent_vllm
 ```
-Option B: Pip Installation (Minimal dependencies, Pip auto-adapts to your CUDA version)
+**Option B: Pip Installation (Minimal dependencies, Pip auto-adapts to your CUDA version)**
 ```bash
 conda create -n muagent_vllm python=3.10 -y
 conda activate muagent_vllm
 pip install -r requirements-vllm.txt
 ```
 ## 📂 Data & Model Preparation
-1. Data Preparation
+### 1. Data Preparation
 Please download the datasets and place them in the data/ directory. The structure should look like this:
 ```text
 data/
@@ -64,12 +64,12 @@ data/
 (Note: The data/ directory is ignored by git to avoid large file uploads.)
 ```
 
-2. Model Preparation
+### 2. Model Preparation
 Please download the LLMs (e.g., Qwen3-14B, Qwen2.5-7B-Instruct) and the Sentence-BERT model (all-MiniLM-L6-v2) into the local model/ directory.
 Note: For Qwen2.5-7B, the expected path is ./model/Qwen2.5-7B-Instruct.。
 The default paths are configured in config.py and can be modified as needed.
 
-3. Environment Variables
+### 3. Environment Variables
 Create a .env file in the project root to configure your API routes (you can refer to .env.example):
 
 ```env
@@ -112,7 +112,7 @@ TEMPERATURE=0.0
 # 50 tokens are sufficient since the model is instructed to output only a label.
 MAX_TOKENS=50
 ```
-🚀 Running Experiments
+## 🚀 Running Experiments
 This project supports experiments on both Qwen3-14B and Qwen2.5-7B-Instruct. Depending on your hardware, you can start them simultaneously or separately.
 
 Step 1: Start vLLM Servers (Terminal 1 & 2)
