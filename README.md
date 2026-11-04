@@ -218,8 +218,12 @@ python run_wiki80.py qwen3-14b --provider vllm >> $LOG_FILE 2>&1
 ### 2.Update the log path in extract_validator_conf.py:
 ```bash
 MERGED_LOGS = {
-    "logs/qwen3-14b_full_merged.log": "qwen3",
-}
+    # Update this to your actual merged log path
+    "logs/qwen3-14b_full_20261027_144757.log": "qwen3",
+        
+    # If you also ran Qwen2.5, uncomment and update the path:
+    # "logs/qwen2.5-7b_full_<TS>.log": "qwen2.5",
+    }
 ```
 ### 3.Run the extraction:
 ```bash
