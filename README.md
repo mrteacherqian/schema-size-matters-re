@@ -5,7 +5,10 @@ This repository contains the official implementation for the paper:
 
 ## 📌 Abstract
 Few-shot relation extraction (RE) with large language models (LLMs) has emerged as a promising paradigm for low-resource information extraction. This study systematically evaluates two orthogonal levers: diversity-aware example selection (Random, Similarity, MMR, Class-Balanced) and multi-agent post-hoc verification (Extractor–Validator–Refiner). Across three benchmarks with distinct schema sizes—SciERC (7 classes), SemEval-2010 (19 classes), and Wiki80 (80 classes)—we demonstrate that example selection is a second-order factor, while schema size and model capacity dominate. We further reveal that under conservative thresholds, multi-agent verification is structurally near-inert, and under aggressive thresholds, it becomes unreliable.
-
+Few-shot relation extraction (RE) with large language models (LLMs) is a promising paradigm for low-resource information extraction. Existing work explores two largely orthogonal levers: diversity-aware example selection (e.g., Maximal Marginal Relevance, MMR) and multi-agent post-hoc verification (Validator and Refiner). However, their efficacy across different relation schema sizes remains poorly understood.
+We report a systematic empirical study on SciERC (7 classes), SemEval-2010 (19 classes), and Wiki80 (80 classes) using Qwen3-14B and Qwen2.5-7B-Instruct. We evaluate four example selection strategies (random, similarity, hybrid MMR, and class-balanced) over $k = 1, 2, 3$, alongside an Extractor–Validator–Refiner pipeline.
+Three findings emerge. First, example selection is generally a second-order factor: gaps among retrieval strategies are within a few points and non-monotonic in k. Schema size and model capacity dominate; no few-shot strategy surpasses zero-shot on the 80-class Wiki80, and class-balanced selection degrades monotonically with k on the 19-class SemEval schema. Second, multi-agent verification is near-inert: the Refiner triggers on only 2.0\% of instances and changes just 1.4\% of predictions, yielding a maximum net accuracy gain of +0.50 percentage points (pp). Third, forcing activation at confidence 60 shifts the effect from inert to unreliable: accuracy changes range from $-6.0$~pp to $+6.5$~pp, with opposite signs across models.
+We conclude that schema size and model capacity are the primary levers for ICL-based RE, and that self-contained multi-agent verification is currently a costly ineffectiveness.
 ## 🌟 Key Features
 - **ICL Example Selection**: Implementation of 4 strategies: Random, Semantic Similarity, Hybrid (MMR), and Class-Balanced.
 - **Multi-Agent Pipeline**: A LangGraph-based **Extractor–Validator–Refiner** architecture.
@@ -251,7 +254,7 @@ state.py: Defines the shared AgentState and ExtractionResult data structures for
 
 utils.py: Utility functions, including accuracy/Macro-F1 calculation and strict directional label parsing.
 
-run_*.py: Execution pipelines for each dataset and the sensitivity analysis script.
+run_*.py: Execution pipelines for each dataset and the sensitivity analysis script(run_sensitivity.py).
 
 start_vllm.sh: Shell script to launch the vLLM API service.
 
