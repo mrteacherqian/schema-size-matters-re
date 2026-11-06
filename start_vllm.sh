@@ -1,12 +1,10 @@
 
 #!/bin/bash
 # start_vllm.sh
-conda activate muagent_vllm
-chmod +x start_vllm.sh
 MODEL_PATH=${1:-/home/robot/model/Qwen3-14B}
 PORT=${2:-8000}
 TP_SIZE=${3:-1}
-SERVED_NAME=${4:-qwen3-14b}    # ← 新增第4个参数模型名
+SERVED_NAME=${4:-qwen3-14b}    
 
 echo "启动 vLLM 服务"
 echo "  模型: ${MODEL_PATH}"
@@ -23,23 +21,30 @@ python -m vllm.entrypoints.openai.api_server \
     --port ${PORT} \
     --host 0.0.0.0 \
     --disable-log-requests
-###启动vllm
-###激活环境 conda activate muagent_vllm
-#chmod +x start_vllm.sh
-#
-## 启动 Qwen3-14B（后台）
-#nohup bash start_vllm.sh /home/robot/model/Qwen3-14B 8000 1 > vllm_qwen3.log 2>&1 &
-#
-## 观察启动日志（约 30–60 秒）
-#tail -f vllm_qwen3.log
-#
-## 看到 "Uvicorn running on http://0.0.0.0:8000" 即表示启动完成
+# ==================================================
+# Start vLLM Server
+# ==================================================
+# 1. Activate the conda environment
+# conda activate muagent_vllm
 
+# 2. Grant execution permission (only needs to be done once)
+# chmod +x start_vllm.sh
 
-##验证服务
-#curl http://localhost:8000/v1/models
-##应看到
-#{
-#  "object": "list",
-#  "data": [{"id": "qwen3-14b", "object": "model", ...}]
-#}
+# 3. Start Qwen3-14B in the background
+# nohup bash start_vllm.sh /home/robot/model/Qwen3-14B 8000 1 > vllm_qwen3.log 2>&1 &
+
+# 4. Monitor the startup log (takes about 30–60 seconds)
+# tail -f vllm_qwen3.log
+
+# 5. The server is ready when you see "Uvicorn running on http://0.0.0.0:8000"
+
+# ==================================================
+# Verify the API service
+# ==================================================
+# curl http://localhost:8000/v1/models
+
+# Expected output:
+# {
+#   "object": "list",
+#   "data": [{"id": "qwen3-14b", "object": "model", ...}]
+# }
